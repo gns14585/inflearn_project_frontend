@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useCustomMove from "../../hooks/useCustomMove";
 import { getList } from "../../api/todoApi";
+import PageComponent from "../common/PageComponent";
 
 const initState = {
   dtoList: [],
@@ -16,15 +17,17 @@ const initState = {
 };
 
 function ListComponent(props) {
-  const { page, size } = useCustomMove();
+  const { page, size, refresh, moveToList } = useCustomMove();
+
+  // 기본값을 initState를 넣어도되고 null로 넣어도됨, 단 null로 넣을경우 if문 사용해서 스피너 넣어주거나 null일경우 대비해서 작성해야함
   const [serverData, setServerData] = useState(initState);
 
   useEffect(() => {
     getList({ page, size }).then((data) => {
       console.log(data);
-      setServerData(data);
+      setServerData({ ...data, current: page });
     });
-  }, [page, size]);
+  }, [page, size, refresh]);
 
   return (
     <div className="border-2 border-blue-100 mt-10 mr-2 ml-2">
@@ -48,6 +51,8 @@ function ListComponent(props) {
           </div>
         ))}
       </div>
+
+      <PageComponent serverData={serverData} movePage={moveToList} />
     </div>
   );
 }

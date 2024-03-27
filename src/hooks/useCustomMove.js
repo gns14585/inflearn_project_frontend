@@ -40,7 +40,7 @@ const useCustomMove = () => {
       queryStr = queryDefault;
     }
 
-    setRefresh(!refresh);
+    setRefresh(!refresh); // 상태를 계속 바꿈으로써 현재 선택된 페이지를 또 클릭가능함
 
     navigate({ pathname: `../list`, search: queryStr });
   };
@@ -52,7 +52,14 @@ const useCustomMove = () => {
     });
   };
 
-  return { moveToList, moveToModify, page, size, refresh };
+  const moveToRead = (num) => {
+    navigate({
+      pathname: `../read/${num}`,
+      search: queryDefault,
+    });
+  };
+
+  return { moveToList, moveToModify, moveToRead, page, size, refresh };
 };
 
 export default useCustomMove;

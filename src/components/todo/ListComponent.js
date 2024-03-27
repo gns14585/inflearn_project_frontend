@@ -17,7 +17,7 @@ const initState = {
 };
 
 function ListComponent(props) {
-  const { page, size, refresh, moveToList } = useCustomMove();
+  const { page, size, refresh, moveToList, moveToRead } = useCustomMove();
 
   // 기본값을 initState를 넣어도되고 null로 넣어도됨, 단 null로 넣을경우 if문 사용해서 스피너 넣어주거나 null일경우 대비해서 작성해야함
   const [serverData, setServerData] = useState(initState);
@@ -36,6 +36,7 @@ function ListComponent(props) {
           <div
             key={todo.tno}
             className="w-full min-w-[400px] p-2 m-2 rounded shadow-md"
+            onClick={() => moveToRead(todo.tno)}
           >
             <div className="flex">
               <div className="font-extrabold text-2xl p-2 w-1/12">

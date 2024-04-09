@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getOne, putOne } from "../../api/productsApi";
+import { deleteOne, getOne, putOne } from "../../api/productsApi";
 import FetchingModal from "../common/FetchingModal";
 import { API_SERVER_HOST } from "../../api/todoApi";
 import useCustomMove from "../../hooks/useCustomMove";
@@ -48,6 +48,7 @@ function ModifyComponent({ pno }) {
     setProduct({ ...product });
   };
 
+  // ------------------------------------ 변경 로직 ------------------------------------
   const handleClickModify = () => {
     const files = uploadRef.current.files;
     const formData = new FormData();
@@ -71,9 +72,23 @@ function ModifyComponent({ pno }) {
     });
   };
 
+  // ------------------------------------ 삭제 로직 ------------------------------------
+  const handleClickDelete = () => {
+    setFetching(true);
+    deleteOne(pno).then((data) => {
+      setFetching(false);
+      setResult("Deleted");
+    });
+  };
+
   const closeModal = () => {
-    if (result === "Modified") {
-      moveToRead(pno);
+    switch (result) {
+      case "Modified":
+        moveToRead(pno);
+        break;
+      case "Deleted":
+        moveToList({ page: 1 });
+        break;
     }
     setResult(null);
   };
@@ -187,6 +202,7 @@ function ModifyComponent({ pno }) {
         <button
           type="button"
           className="rounded p-4 m-2 text-xl w-32 text-white bg-red-500"
+          onClick={handleClickDelete}
         >
           Delete
         </button>
@@ -200,6 +216,7 @@ function ModifyComponent({ pno }) {
         <button
           type="button"
           className="rounded p-4 m-2 text-xl w-32 text-white bg-blue-500"
+          onClick={() => moveToList()}
         >
           List
         </button>

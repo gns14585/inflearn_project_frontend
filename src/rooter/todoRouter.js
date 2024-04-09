@@ -18,6 +18,7 @@ const todoRouter = () => {
       ),
     },
     {
+      // 아무것도 없는 경로는 list로 이동
       path: "",
       element: <Navigate replace={true} to={"list"} />,
     },

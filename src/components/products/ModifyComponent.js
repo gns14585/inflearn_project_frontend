@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getOne } from "../../api/productsApi";
+import { getOne, putOne } from "../../api/productsApi";
 import FetchingModal from "../common/FetchingModal";
 import { API_SERVER_HOST } from "../../api/todoApi";
+import useCustomMove from "../../hooks/useCustomMove";
+import ResultModal from "../common/ResultModal";
 
 const initState = {
   tno: 0,
@@ -17,6 +19,8 @@ const host = API_SERVER_HOST;
 function ModifyComponent({ pno }) {
   const [product, setProduct] = useState(initState);
   const [fetching, setFetching] = useState(false);
+  const [result, setResult] = useState(false);
+  const { moveToList, moveToRead } = useCustomMove();
   const uploadRef = useRef();
 
   // ------------------------------- 데이터 가져오는 로직 -------------------------------
@@ -36,11 +40,57 @@ function ModifyComponent({ pno }) {
   };
 
   // 필요없는 이미지 삭제 후 새로운 이미지 추가 로직
-  const deleteOldImages = (imageName) => {};
+  const deleteOldImages = (imageName) => {
+    const resultFileNames = product.uploadFileNames.filter(
+      (fileName) => fileName !== imageName,
+    );
+    product.uploadFileNames = resultFileNames;
+    setProduct({ ...product });
+  };
+
+  const handleClickModify = () => {
+    const files = uploadRef.current.files;
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]);
+    }
+    formData.append("pname", product.pname);
+    formData.append("pdesc", product.pdesc);
+    formData.append("price", product.price);
+    formData.append("delFlag", product.delFlag);
+
+    for (let i = 0; i < product.uploadFileNames.length; i++) {
+      formData.append("uploadFileNames", product.uploadFileNames[i]);
+    }
+
+    setFetching(true);
+
+    putOne(pno, formData).then((data) => {
+      setResult("Modified");
+      setFetching(false);
+    });
+  };
+
+  const closeModal = () => {
+    if (result === "Modified") {
+      moveToRead(pno);
+    }
+    setResult(null);
+  };
 
   return (
     <div className="border-2 border-sky-200 mt-10 m-2 p-4">
       {fetching ? <FetchingModal /> : <></>}
+
+      {result ? (
+        <ResultModal
+          title={`${result}`}
+          content={"처리되었습니다."}
+          callbackFn={closeModal}
+        />
+      ) : (
+        <></>
+      )}
 
       <div className="flex justify-center">
         <div className="relative mb-4 flex w-full flex-wrap items-stretch">
@@ -120,7 +170,10 @@ function ModifyComponent({ pno }) {
                 className="flex justify-center flex-col w-1/3 m-1 align-baseline"
                 key={i}
               >
-                <button className="bg-blue-500 text-3xl text-white">
+                <button
+                  className="bg-blue-500 text-3xl text-white"
+                  onClick={() => deleteOldImages(imgFile)}
+                >
                   DELETE
                 </button>
                 <img alt="img" src={`${host}/api/products/view/s_${imgFile}`} />
@@ -128,6 +181,28 @@ function ModifyComponent({ pno }) {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="flex justify-end p-4">
+        <button
+          type="button"
+          className="rounded p-4 m-2 text-xl w-32 text-white bg-red-500"
+        >
+          Delete
+        </button>
+        <button
+          type="button"
+          className="inline-block rounded p-4 m-2 text-xl w-32 text-white bg-orange-500"
+          onClick={handleClickModify}
+        >
+          Modify
+        </button>
+        <button
+          type="button"
+          className="rounded p-4 m-2 text-xl w-32 text-white bg-blue-500"
+        >
+          List
+        </button>
       </div>
     </div>
   );

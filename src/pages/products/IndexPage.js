@@ -11,7 +11,7 @@ function IndexPage(props) {
       <div className="w-full flex m-2 p-2">
         <div
           className="text-xl m-1 p-2 w-20 font-extrabold text-center underline"
-          onClick={() => navigate("/list")}
+          onClick={() => navigate("list")}
         >
           LIST
         </div>

@@ -40,7 +40,7 @@ function ListComponent(props) {
         {serverData.dtoList.map((product) => (
           <div
             key={product.pno}
-            className="w-1/2 p-1 rounded shadow-md border-2"
+            className="w-1/2 p-1 rounded shadow-md border-2 cursor-pointer"
             onClick={() => moveToRead(product.pno)}
           >
             <div className="flex flex-col h-full">

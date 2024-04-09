@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import TodoRouter from "./todoRouter";
 import ProductsRouter from "./productsRouter";
 
-const Loading = <div className="bg-red-700">Loading....</div>;
+const Loading = <div>Loading....</div>;
 const Main = lazy(() => import("../pages/MainPage"));
 const About = lazy(() => import("../pages/AboutPage"));
 const TodoIndex = lazy(() => import("../pages/todo/indexPage"));

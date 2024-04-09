@@ -56,7 +56,7 @@ function AddComponent(props) {
           <div className="w-1/5 p-6 text-right font-bold">CONTENT</div>
           <input
             className="w-4/5 p-6 rounded-r border border-solid border-neutral-500 shadow-md"
-            name="writer"
+            name="content"
             type={"text"}
             value={todo.content}
             onChange={handleChangeTodo}

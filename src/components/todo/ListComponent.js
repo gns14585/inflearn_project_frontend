@@ -20,6 +20,7 @@ function ListComponent(props) {
   const { page, size, refresh, moveToList, moveToRead } = useCustomMove();
 
   // 기본값을 initState를 넣어도되고 null로 넣어도됨, 단 null로 넣을경우 if문 사용해서 스피너 넣어주거나 null일경우 대비해서 작성해야함
+  // 단, null로 하게되면 각 데이터 값들을 useState로 지정해줘야함
   const [serverData, setServerData] = useState(initState);
 
   useEffect(() => {

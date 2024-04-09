@@ -1,4 +1,8 @@
 import React, { useRef, useState } from "react";
+import { postAdd } from "../../api/productsApi";
+import FetchingModal from "../common/FetchingModal";
+import ResultModal from "../common/ResultModal";
+import useCustomMove from "../../hooks/useCustomMove";
 
 const initState = {
   pname: "",
@@ -10,6 +14,10 @@ const initState = {
 function AddComponent(props) {
   const [product, setProduct] = useState(initState);
   const uploadRef = useRef();
+  const [fetching, setFetching] = useState(false); // 모달 상태
+  const [result, setResult] = useState(false); // 모달 사라졌을때 경로이동 상태
+  const { moveToList } = useCustomMove(); // 리스트로 이동하는 커스텀훅
+
   const handleChangeProduct = (e) => {
     // 이렇게 코드를 작성함으로써 기존에 useState로 각 속성을 다 만들 필요 없이 미리 initState로 작성을 해놓으면 useState 중복사용을 줄일 수 있음.
     product[e.target.name] = e.target.value;
@@ -18,6 +26,29 @@ function AddComponent(props) {
 
   const handleClickAdd = (e) => {
     console.log(product);
+    const formData = new FormData();
+    const files = uploadRef.current.files;
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]);
+    }
+    formData.append("pname", product.pname);
+    formData.append("pdesc", product.pdesc);
+    formData.append("price", product.price);
+
+    console.log(formData);
+
+    setFetching(true);
+
+    postAdd(formData).then((data) => {
+      setFetching(false);
+      setResult(data.result);
+    });
+  };
+
+  const closeModal = () => {
+    setResult(null);
+    moveToList({ page: 1 });
   };
 
   return (
@@ -83,11 +114,25 @@ function AddComponent(props) {
           <button
             type="bytton"
             className="rounded p-4 w-36 bg-blue-500 text-xl text-white"
+            onClick={handleClickAdd}
           >
             ADD
           </button>
         </div>
       </div>
+
+      {/* --------------------------- 모달 로직 --------------------------- */}
+      {fetching ? <FetchingModal /> : <></>}
+
+      {result ? (
+        <ResultModal
+          callbackFn={closeModal}
+          title={"Product Add Result"}
+          content={`${result}번 상품 등록 완료`}
+        ></ResultModal>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

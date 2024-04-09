@@ -1,5 +1,6 @@
 import { API_SERVER_HOST } from "./todoApi";
 import axios from "axios";
+import async from "async";
 
 const host = `${API_SERVER_HOST}/api/products`;
 
@@ -19,5 +20,16 @@ export const getList = async (pageParam) => {
 
 export const getOne = async (pno) => {
   const res = await axios.get(`${host}/${pno}`);
+  return res.data;
+};
+
+export const deleteOne = async (pno) => {
+  const res = await axios.delete(`${host}/${pno}`);
+  return res.data;
+};
+
+export const putOne = async (pno, product) => {
+  const header = { headers: { "Content-Type": "multipart/form-data" } };
+  const res = await axios.put(`${host}/${pno}`, product, header);
   return res.data;
 };
